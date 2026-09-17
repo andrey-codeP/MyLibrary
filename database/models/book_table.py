@@ -9,4 +9,4 @@ class Books(BookBase):
     author: Mapped[str]
     year: Mapped[int]
     pages: Mapped[int]     #page count
-    is_read: Mapped[bool | None] = mapped_column(default=False, server_default="false")
+    is_read: Mapped[bool | False] = mapped_column(default=False, server_default="false")
