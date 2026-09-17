@@ -1,5 +1,4 @@
 from fastapi import APIRouter, HTTPException, status
-from fastapi import status
 
 from schemas.book import SBookAdd, SBook
 from database.depends import SessionDep
@@ -35,7 +34,7 @@ async def get_books(session: SessionDep):
     return books
 
 @router.put("/{book_id}", response_model=SBook, status_code=status.HTTP_200_OK)
-async def update_book(book_id: int, book: SBook, session: SessionDep):
+async def update_book(book_id: int, book: SBookAdd, session: SessionDep):
     update_model = await BooksRepository.update_book(book_id, book, session)
     if update_model is None:
         raise HTTPException(
