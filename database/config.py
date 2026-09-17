@@ -8,7 +8,6 @@ ENV_PATH = os.path.join(BASE_DIR, ".env")
 class Settings(BaseSettings):
     DATABASE_URL: str
 
-    # ИСПРАВЛЕНО: добавлен параметр extra='ignore'
     model_config = SettingsConfigDict(env_file=ENV_PATH, extra='ignore')
 
 setting = Settings()
