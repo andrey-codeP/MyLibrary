@@ -11,6 +11,6 @@ async def get_db():
             yield session
             await session.commit()
         except Exception as e:
-            await session.rollbacl()
+            await session.rollback()
             raise e
-SessionDup = Annotated[AsyncSession, Depends(get_db)]
+SessionDep = Annotated[AsyncSession, Depends(get_db)]
