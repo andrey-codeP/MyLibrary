@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Библиотека FastAPI</title>
+    <style>
+        /* Минимальные стили, чтобы страница выглядела аккуратно */
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #34495e;
+            padding-bottom: 10px;
+        }
+        .book-card {
+            background: white;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .book-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2980b9;
+        }
+        .book-meta {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+        .empty-message {
+            font-style: italic;
+            color: #95a5a6;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>📚 Список доступных книг</h1>
+
+    <div class="books-list">
+        <!-- Цикл Jinja2: пробегаемся по списку книг, полученных из репозитория -->
+        {% for book in books %}
+            <div class="book-card">
+                <!-- Выводим свойства модели (предполагаю, что у тебя есть title, author и id) -->
+                <div class="book-title">{{ book.title }}</div>
+
+                <div class="book-meta">
+                    {% if book.author %}
+                        Автор: {{ book.author }} |
+                    {% endif %}
+                    ID книги в базе данных: <strong>{{ book.id }}</strong>
+                </div>
+            </div>
+        {% else %}
+            <!-- Блок % else % в Jinja2 срабатывает автоматически, если список books пуст -->
+            <p class="empty-message">В базе данных пока нет ни одной книги.</p>
+        {% endfor %}
+    </div>
+
+</body>
+</html>
