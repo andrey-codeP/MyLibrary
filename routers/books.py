@@ -11,7 +11,7 @@ router = APIRouter(
 )
 
 
-@router.post("/", response_model=SBook, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=SBook, status_code=status.HTTP_201_CREATED)
 async def create_book(book: SBookAdd, session: SessionDep):
     book_model = await BooksRepository.add_book(book, session)
     return book_model
@@ -28,7 +28,7 @@ async def get_book(book_id: int, session: SessionDep):
     return book
 
 
-@router.get("/", response_model=list[SBook], status_code=status.HTTP_200_OK)
+@router.get("", response_model=list[SBook], status_code=status.HTTP_200_OK)
 async def get_books(session: SessionDep):
     books = await BooksRepository.get_all_books(session)
     return books
