@@ -13,4 +13,6 @@ async def get_db():
         except Exception as e:
             await session.rollback()
             raise e
+
+
 SessionDep = Annotated[AsyncSession, Depends(get_db)]

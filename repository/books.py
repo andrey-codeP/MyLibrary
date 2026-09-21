@@ -4,6 +4,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from schemas.book import SBookAdd, SBook
 from database.models.book_table import Books
 
+
 class BooksRepository:
     @classmethod
     async def add_book(cls, book: SBookAdd, session: AsyncSession) -> Books:
@@ -15,14 +16,12 @@ class BooksRepository:
 
         return book
 
-
     @classmethod
     async def get_book(cls, book_id: int, session: AsyncSession) -> Books | None:
         query = select(Books).where(Books.id == book_id)
         result = await session.execute(query)
 
         return result.scalar_one_or_none()
-
 
     @classmethod
     async def get_all_books(cls, session: AsyncSession) -> list[Books]:
@@ -32,9 +31,10 @@ class BooksRepository:
         all_books = result.scalars().all()
         return list(all_books)
 
-
     @classmethod
-    async def update_book(cls, book_id: int, book: SBookAdd, session: AsyncSession) -> Books:
+    async def update_book(
+        cls, book_id: int, book: SBookAdd, session: AsyncSession
+    ) -> Books:
         book = book.model_dump(exclude_unset=True)
         query = update(Books).where(Books.id == book_id).values(**book).returning(Books)
 
@@ -44,7 +44,6 @@ class BooksRepository:
         update_book = result.scalar_one_or_none()
 
         return update_book
-
 
     @classmethod
     async def delete_book(cls, book_id: int, session: AsyncSession) -> Books | None:

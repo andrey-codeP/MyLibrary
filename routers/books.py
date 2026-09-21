@@ -23,7 +23,7 @@ async def get_book(book_id: int, session: SessionDep):
     if book is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Book with id {book_id} not found"
+            detail=f"Book with id {book_id} not found",
         )
     return book
 
@@ -33,13 +33,14 @@ async def get_books(session: SessionDep):
     books = await BooksRepository.get_all_books(session)
     return books
 
+
 @router.put("/{book_id}", response_model=SBook, status_code=status.HTTP_200_OK)
 async def update_book(book_id: int, book: SBookAdd, session: SessionDep):
     update_model = await BooksRepository.update_book(book_id, book, session)
     if update_model is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Book with id {book_id} not found"
+            detail=f"Book with id {book_id} not found",
         )
     return update_model
 
@@ -50,6 +51,6 @@ async def delete_book(book_id: int, session: SessionDep):
     if delete_model is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"Book with id {book_id} not found"
+            detail=f"Book with id {book_id} not found",
         )
     return None
