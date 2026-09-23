@@ -2,16 +2,18 @@ from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
 from database.models.book_table import BookBase
+from database.models.base import UserBase
 from database.connections import engine
 from routers.books import router as book_router
 from routers.frontend import router as front_router
+from routers.authorization import router as authorization_router
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     async with engine.begin() as conn:
         await conn.run_sync(BookBase.metadata.create_all)
-
+        await conn.run_sync(UserBase.metadata.create_all)
     yield
 
 
@@ -25,3 +27,4 @@ library = FastAPI(
 
 library.include_router(book_router)
 library.include_router(front_router)
+library.include_router(authorization_router)
