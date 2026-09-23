@@ -11,7 +11,7 @@ from datetime import datetime, timedelta, timezone
 from config import settings
 
 SECRET_KEY = settings.JWT_SECRET_TOKEN
-
+ACCESS_TOKEN_ALGORITHM = "HS256"
 oauth2_schemas = OAuth2PasswordBearer(tokenUrl="/token")
 
 
@@ -20,17 +20,17 @@ def create_access_token(user_id: int) -> str:
     payload = {"sub": str(user_id), "type": "access"}
 
     expire = datetime.now(timezone.utc) + timedelta(
-        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+        minutes=settings.JWT_ACCESS_TOKEN_EXPIRE_MINUTES
     )
     payload.update({"exp": expire})
 
     encoded_jwt = jwt.encode(
-        payload, SECRET_KEY, algorithm=settings.ACCESS_TOKEN_ALGORITHM
+        payload, SECRET_KEY, algorithm=ACCESS_TOKEN_ALGORITHM
     )
     return encoded_jwt
 
 
-def get_current_user(token: Annotated[str, Depends(oauth2_schemas)]):
+def get_current_user_id(token: Annotated[str, Depends(oauth2_schemas)]):
     try:
         payload = jwt.decode(
             token, SECRET_KEY, algorithm=settings.ACCESS_TOKEN_ALGORITHM
