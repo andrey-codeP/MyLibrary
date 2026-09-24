@@ -7,8 +7,8 @@ from database.models.book_table import Books
 
 class BooksRepository:
     @classmethod
-    async def add_book(cls, book: SBookAdd, session: AsyncSession) -> Books:
-        book = Books(**book.model_dump())
+    async def add_book(cls, book: SBookAdd, user_id: int, session: AsyncSession) -> Books:
+        book = Books(**book.model_dump(), owner_id=user_id)
         session.add(book)
 
         await session.flush()
@@ -17,15 +17,15 @@ class BooksRepository:
         return book
 
     @classmethod
-    async def get_book(cls, book_id: int, session: AsyncSession) -> Books | None:
-        query = select(Books).where(Books.id == book_id)
+    async def get_book(cls, user_id: int, book_id: int, session: AsyncSession) -> Books | None:
+        query = select(Books).where(Books.owner_id == user_id, Books.id == book_id)
         result = await session.execute(query)
 
         return result.scalar_one_or_none()
 
     @classmethod
-    async def get_all_books(cls, session: AsyncSession) -> list[Books]:
-        query = select(Books)
+    async def get_all_books(cls, user_id: int, session: AsyncSession) -> list[Books]:
+        query = select(Books).where(user_id == Books.owner_id)
         result = await session.execute(query)
 
         all_books = result.scalars().all()
@@ -33,10 +33,17 @@ class BooksRepository:
 
     @classmethod
     async def update_book(
-        cls, book_id: int, book: SBookAdd, session: AsyncSession
+        cls,
+        user_id: int,
+        book: SBookAdd,
+        book_id: int,
+        session: AsyncSession
     ) -> Books:
         book = book.model_dump(exclude_unset=True)
-        query = update(Books).where(Books.id == book_id).values(**book).returning(Books)
+        query = (update(Books).
+                 where(Books.owner_id == user_id, Books.id == book_id).
+                 values(**book).
+                 returning(Books))
 
         result = await session.execute(query)
 
@@ -46,8 +53,8 @@ class BooksRepository:
         return update_book
 
     @classmethod
-    async def delete_book(cls, book_id: int, session: AsyncSession) -> Books | None:
-        query = delete(Books).where(Books.id == book_id).returning(Books)
+    async def delete_book(cls, book_id: int, user_id, session: AsyncSession) -> Books | None:
+        query = delete(Books).where(Books.owner_id == user_id, Books.id == book_id).returning(Books)
         result = await session.execute(query)
 
         await session.flush()
