@@ -2,7 +2,7 @@ from datetime import datetime, timezone
 from sqlalchemy import select
 
 
-from database.models.base import UserBase
+from database.models.base import Base
 from database.models.user_table import UserTable
 from schemas.user import UserInDb
 from database.depends import SessionDep
