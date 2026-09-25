@@ -13,13 +13,17 @@ router = APIRouter(
 
 
 @router.post("", response_model=SBook, status_code=status.HTTP_201_CREATED)
-async def create_book(book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId):
+async def create_book(
+    book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId
+):
     book_model = await BooksRepository.add_book(book, current_user_id, session)
     return book_model
 
 
 @router.get("/{book_id}", response_model=SBook, status_code=status.HTTP_200_OK)
-async def get_book(book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId):
+async def get_book(
+    book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId
+):
     book = await BooksRepository.get_book(book_id, current_user_id, session)
     if book is None:
         raise HTTPException(
@@ -36,8 +40,15 @@ async def get_books(session: SessionDep, current_user_id: VerifTokenAndGetId):
 
 
 @router.put("/{book_id}", response_model=SBook, status_code=status.HTTP_200_OK)
-async def update_book(book_id: int, book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId):
-    update_model = await BooksRepository.update_book(current_user_id, book, book_id, session)
+async def update_book(
+    book_id: int,
+    book: SBookAdd,
+    session: SessionDep,
+    current_user_id: VerifTokenAndGetId,
+):
+    update_model = await BooksRepository.update_book(
+        current_user_id, book, book_id, session
+    )
     if update_model is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -47,7 +58,9 @@ async def update_book(book_id: int, book: SBookAdd, session: SessionDep, current
 
 
 @router.delete("/{book_id}", status_code=status.HTTP_204_NO_CONTENT)
-async def delete_book(book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId):
+async def delete_book(
+    book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId
+):
     delete_model = await BooksRepository.delete_book(current_user_id, book_id, session)
     if delete_model is None:
         raise HTTPException(
