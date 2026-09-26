@@ -4,15 +4,15 @@ from sqlalchemy import select, delete
 
 from database.models.base import Base
 from database.models.tokens import Tokens
-from database.depends import SessionDep
+from sqlalchemy.ext.asyncio import AsyncSession
 
-from security.auth import get_hash_password
+
 
 
 class TokenRepository:
     @classmethod
     async def create_token(
-        cls, user_id: int, hashed_token: str, expires_at: datetime, session: SessionDep
+        cls, user_id: int, hashed_token: str, expires_at: datetime, session: AsyncSession
     ) -> Tokens:
         token = Tokens(
             user_id=user_id, hashed_token=hashed_token, expires_at=expires_at
@@ -27,10 +27,10 @@ class TokenRepository:
 
     @classmethod
     async def get_by_hashed_token(
-        cls, hashed_token: str, session: SessionDep
+        cls, hashed_token: str, session: AsyncSession
     ) -> Tokens | None:
 
-        quary = session.select(Tokens).where(Tokens.hashed_token == hashed_token)
+        quary = select(Tokens).where(Tokens.hashed_token == hashed_token)
         result = await session.execute(quary)
         token = result.scalar_one_or_none()
 
@@ -38,7 +38,7 @@ class TokenRepository:
 
     @classmethod
     async def delete_by_hashed_token(
-        cls, hashed_token: str, session: SessionDep
+        cls, hashed_token: str, session: AsyncSession
     ) -> bool:
 
         result = await session.execute(
@@ -48,5 +48,24 @@ class TokenRepository:
         return result.rowcount > 0
 
     @classmethod
-    async def delete_by_user_id(cls, user_id: int, session: SessionDep) -> None:
-        result = await session.execute(delete(Tokens).where(Tokens.user_id == user_id))
+    async def delete_by_user_id(cls, user_id: int, session: AsyncSession) -> None:
+        await session.execute(delete(Tokens).where(Tokens.user_id == user_id))
+
+    @classmethod
+    async def rotate(
+        cls,
+        token: Tokens,
+        new_hashed_token: str,
+        new_expires_at: datetime,
+        session: AsyncSession
+    ) -> Tokens:
+        token.hashed_token = new_hashed_token
+        token.expires_at = new_expires_at
+
+        # Не обязателен: token уже загружен этой session.
+        # Но оставляем явно, чтобы было понятно, где объект отслеживается.
+        session.add(token)
+
+        await session.flush()
+
+        return token

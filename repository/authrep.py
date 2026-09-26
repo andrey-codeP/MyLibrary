@@ -1,4 +1,5 @@
 from datetime import datetime, timezone
+from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
 
@@ -13,7 +14,7 @@ from security.auth import get_hash_password
 class AuthUserRepository:
     @classmethod
     async def create_user(
-        cls, user_for_reg: UserInDb, session: SessionDep
+        cls, user_for_reg: UserInDb, session: AsyncSession
     ) -> UserTable:
         user_data = user_for_reg.model_dump()
         plained_password = user_data.pop("password")
@@ -33,14 +34,14 @@ class AuthUserRepository:
         return user
 
     @classmethod
-    async def get_user_by_id(cls, user_id: int, session: SessionDep):
+    async def get_user_by_id(cls, user_id: int, session: AsyncSession):
         query = select(UserTable).where(UserTable.id == user_id)
         result = await session.execute(query)
         user = result.scalar_one_or_none()
         return user
 
     @classmethod
-    async def get_user_by_username(cls, username: str, session: SessionDep):
+    async def get_user_by_username(cls, username: str, session: AsyncSession):
         query = select(UserTable).where(UserTable.username == username)
         result = await session.execute(query)
         user = result.scalar_one_or_none()

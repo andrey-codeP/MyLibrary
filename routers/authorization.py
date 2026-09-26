@@ -8,8 +8,9 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
-from config import settings
+import secrets
 
+from config import settings
 from repository.authrep import AuthUserRepository
 from repository.tokens import TokenRepository
 
@@ -77,7 +78,7 @@ async def login(
 
 
 @router.post("/refresh", status_code=status.HTTP_200_OK)
-async def get_new_access_token(token: Annotated[str, Cookie(default=None)], session: SessionDep):
+async def get_new_access_token(response: Response, token: Annotated[str | None, Cookie(alias="refresh_token")], session: SessionDep):
 
     if token is None:
         raise HTTPException(
@@ -85,5 +86,56 @@ async def get_new_access_token(token: Annotated[str, Cookie(default=None)], sess
             detail="Refresh token is missing",
         )
     hashed_token = hash_refresh_token(token)
+    token_in_db = await TokenRepository.get_by_hashed_token(hashed_token, session)
+
+    if token_in_db is None:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token is invalid",
+        )
+
+    now = datetime.now(timezone.utc)
 
 
+    if token_in_db.expires_at <= now:
+        await TokenRepository.delete_by_hashed_token(token_in_db.hashed_token, session)
+
+        response.delete_cookie(
+            key="refresh_token",
+            path="/",
+        )
+
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Refresh token is expired",
+        )
+
+    user = token_in_db.user
+
+
+    access_token = create_access_token(user.id)
+
+    new_refresh_token = create_refresh_token(user.id)
+    new_refresh_token_hash = hash_refresh_token(new_refresh_token)
+
+    await TokenRepository.rotate(
+        token=token_in_db,
+        new_hashed_token=new_refresh_token_hash,
+        new_expires_at=now + timedelta(days=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS),
+        session=session,
+    )
+
+    response.set_cookie(
+        key="refresh_token",
+        value=new_refresh_token,
+        httponly=True,
+        secure=False,  # Только localhost / HTTP. В production: True.
+        samesite="lax",
+        max_age=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/",
+    )
+
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+    }

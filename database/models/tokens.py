@@ -1,6 +1,6 @@
 from database.models.base import Base
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import ForeignKey, Uuid, String
+from sqlalchemy import ForeignKey, Uuid, String, DateTime
 
 from datetime import datetime
 from uuid import UUID, uuid4
@@ -9,12 +9,12 @@ from uuid import UUID, uuid4
 class Tokens(Base):
     __tablename__ = "tokens"
 
-    id: Mapped[int] = mapped_column(Uuid, primary_key=True, default=uuid4)
+    id: Mapped[UUID] = mapped_column(Uuid, primary_key=True, default=uuid4)
     hashed_token: Mapped[str] = mapped_column(
-        String(255), nullable=True, unique=True, index=True
+        String(255), nullable=False, unique=True, index=True
     )
 
-    expires_at: Mapped[datetime] = mapped_column(nullable=True)
+    expires_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False, index=True)
 
-    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="CASCADE"), nullable=False, index=True)
     user: Mapped["User"] = relationship("UserTable", back_populates="tokens")
