@@ -2,7 +2,7 @@ from security import (
     verify_password_or_hash,
     create_access_token,
     create_refresh_token,
-    hash_refresh_token
+    hash_refresh_token,
 )
 from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
@@ -71,14 +71,18 @@ async def login(
         httponly=True,
         secure=False,
         samesite="lax",
-        max_age=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS  * 24 * 60 * 60,
-        path="/"
+        max_age=settings.JWT_REFRESH_TOKEN_EXPIRE_DAYS * 24 * 60 * 60,
+        path="/",
     )
     return {"access_token": access_token, "token_type": "bearer"}
 
 
 @router.post("/refresh", status_code=status.HTTP_200_OK)
-async def get_new_access_token(response: Response, token: Annotated[str | None, Cookie(alias="refresh_token")], session: SessionDep):
+async def get_new_access_token(
+    response: Response,
+    token: Annotated[str | None, Cookie(alias="refresh_token")],
+    session: SessionDep,
+):
 
     if token is None:
         raise HTTPException(
@@ -96,7 +100,6 @@ async def get_new_access_token(response: Response, token: Annotated[str | None, 
 
     now = datetime.now(timezone.utc)
 
-
     if token_in_db.expires_at <= now:
         await TokenRepository.delete_by_hashed_token(token_in_db.hashed_token, session)
 
@@ -111,7 +114,6 @@ async def get_new_access_token(response: Response, token: Annotated[str | None, 
         )
 
     user = token_in_db.user
-
 
     access_token = create_access_token(user.id)
 

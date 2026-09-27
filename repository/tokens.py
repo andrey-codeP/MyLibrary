@@ -7,12 +7,14 @@ from database.models.tokens import Tokens
 from sqlalchemy.ext.asyncio import AsyncSession
 
 
-
-
 class TokenRepository:
     @classmethod
     async def create_token(
-        cls, user_id: int, hashed_token: str, expires_at: datetime, session: AsyncSession
+        cls,
+        user_id: int,
+        hashed_token: str,
+        expires_at: datetime,
+        session: AsyncSession,
     ) -> Tokens:
         token = Tokens(
             user_id=user_id, hashed_token=hashed_token, expires_at=expires_at
@@ -57,7 +59,7 @@ class TokenRepository:
         token: Tokens,
         new_hashed_token: str,
         new_expires_at: datetime,
-        session: AsyncSession
+        session: AsyncSession,
     ) -> Tokens:
         token.hashed_token = new_hashed_token
         token.expires_at = new_expires_at
