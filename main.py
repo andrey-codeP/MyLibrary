@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 from contextlib import asynccontextmanager
 
-
+from middlewares import log_and_time_middleware
 from database.models.base import Base
 from database.connections import engine
 from routers.books import router as book_router
@@ -23,6 +23,9 @@ library = FastAPI(
     version="1.0.0",
     redirect_slashes=False,
 )
+
+library.middleware("http")(log_and_time_middleware)
+
 
 library.include_router(book_router)
 library.include_router(front_router)
