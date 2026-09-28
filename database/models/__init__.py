@@ -1,6 +1,7 @@
 from database.models.user import UserTable
-from database.models.book import (
-    Books,
-)  # <-- Убедитесь, что здесь импортируется Books, а не BookBase!
+from database.models.book import Books
+from database.models.tokens import Tokens
 
-__all__ = ["UserTable", "Books"]
+__all__ = ["UserTable", "Books", "Tokens"]
+
+
