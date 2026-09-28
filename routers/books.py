@@ -1,6 +1,6 @@
-from fastapi import APIRouter, HTTPException, status, Depends
-from typing import Annotated
+from fastapi import APIRouter, HTTPException, status, Depends, BackgroundTasks
 
+from background_tasks import background_log
 from schemas.book import SBookAdd, SBook
 from database.depends import SessionDep
 from repository.books import BooksRepository
@@ -14,9 +14,10 @@ router = APIRouter(
 
 @router.post("", response_model=SBook, status_code=status.HTTP_201_CREATED)
 async def create_book(
-    book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId
+    book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId, background_task: BackgroundTasks
 ):
     book_model = await BooksRepository.add_book(book, current_user_id, session)
+    background_task.add_task(background_log, book_model.title, book_model.owner_id)
     return book_model
 
 
