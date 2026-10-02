@@ -1,4 +1,4 @@
-from security import (
+from app.security import (
     verify_password_or_hash,
     create_access_token,
     create_refresh_token,
@@ -8,14 +8,13 @@ from fastapi import APIRouter, Depends, HTTPException, status, Response, Cookie
 from fastapi.security import OAuth2PasswordRequestForm
 from typing import Annotated
 from datetime import datetime, timedelta, timezone
-import secrets
 
-from config import settings
-from repository.authrep import AuthUserRepository
-from repository.tokens import TokenRepository
+from app.config import settings
+from app.repository.authrep import AuthUserRepository
+from app.repository.tokens import TokenRepository
 
-from schemas.user import UserInDb
-from database.depends import SessionDep
+from app.schemas.user import UserInDb
+from app.database.depends import SessionDep
 
 router = APIRouter(prefix="/auth", tags=["auth"])
 

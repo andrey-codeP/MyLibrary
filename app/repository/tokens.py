@@ -1,9 +1,7 @@
-from datetime import datetime, timezone
+from datetime import datetime
 from sqlalchemy import select, delete
 
-
-from database.models.base import Base
-from database.models.tokens import Tokens
+from app.database.models.tokens import Tokens
 from sqlalchemy.ext.asyncio import AsyncSession
 
 

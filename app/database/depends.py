@@ -2,7 +2,7 @@ from fastapi import Depends
 from typing import Annotated
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from database.connections import new_sessions
+from app.database.connections import new_sessions
 
 
 async def get_db():

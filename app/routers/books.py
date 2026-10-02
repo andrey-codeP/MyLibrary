@@ -1,10 +1,10 @@
-from fastapi import APIRouter, HTTPException, status, Depends, BackgroundTasks
+from fastapi import APIRouter, HTTPException, status, BackgroundTasks
 
-from background_tasks import background_log
-from schemas.book import SBookAdd, SBook
-from database.depends import SessionDep
-from repository.books import BooksRepository
-from security import VerifTokenAndGetId
+from app.background_tasks import background_log
+from app.schemas.book import SBookAdd, SBook
+from app.database.depends import SessionDep
+from app.repository.books import BooksRepository
+from app.security import VerifTokenAndGetId
 
 router = APIRouter(
     prefix="/books",

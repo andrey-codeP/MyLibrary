@@ -2,13 +2,10 @@ from datetime import datetime, timezone
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 
+from app.database.models import UserTable
+from app.schemas.user import UserInDb
 
-from database.models.base import Base
-from database.models.user import UserTable
-from schemas.user import UserInDb
-from database.depends import SessionDep
-
-from security.auth import get_hash_password
+from app.security import get_hash_password
 
 
 class AuthUserRepository:

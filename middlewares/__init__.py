@@ -1,1 +1,0 @@
-from middlewares.log_time import log_and_time_middleware

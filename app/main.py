@@ -1,12 +1,9 @@
 from fastapi import FastAPI
-from contextlib import asynccontextmanager
 
-from middlewares import log_and_time_middleware
-from database.models.base import Base
-from database.connections import engine
-from routers.books import router as book_router
-from routers.frontend import router as front_router
-from routers.authorization import router as authorization_router
+from app.middlewares import log_and_time_middleware
+from app.routers.books import router as book_router
+from app.routers.frontend import router as front_router
+from app.routers.authorization import router as authorization_router
 
 
 

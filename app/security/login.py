@@ -7,7 +7,7 @@ from typing import Annotated
 from datetime import datetime, timedelta, timezone
 
 
-from config import settings
+from app.config import settings
 
 SECRET_KEY = settings.JWT_SECRET_TOKEN
 JWT_ALGORITHM = "HS256"

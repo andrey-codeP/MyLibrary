@@ -1,7 +1,7 @@
 from fastapi import Request
 import time
 
-from logger import ms_logger
+from app.logger import ms_logger
 
 
 async def log_and_time_middleware(request: Request, call_next):

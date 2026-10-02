@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy import DateTime, Boolean, func, String
 
-from datetime import datetime, timezone
+from datetime import datetime
 from typing import List
 
-from database.models.base import Base
+from app.database.models.base import Base
 
 
 class UserTable(Base):

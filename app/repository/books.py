@@ -1,8 +1,8 @@
 from sqlalchemy import select, update, delete
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from schemas.book import SBookAdd, SBook
-from database.models.book import Books
+from app.schemas.book import SBookAdd
+from app.database.models import Books
 
 
 class BooksRepository:

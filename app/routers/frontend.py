@@ -2,8 +2,8 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
 
-from database.depends import SessionDep
-from repository.books import BooksRepository
+from app.database.depends import SessionDep
+from app.repository.books import BooksRepository
 
 router = APIRouter(prefix="/pages", tags=["Frontend pages"])
 
