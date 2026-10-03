@@ -29,7 +29,7 @@ class BooksRepository:
 
     @classmethod
     async def get_all_books(cls, user_id: int, session: AsyncSession) -> list[Books]:
-        query = select(Books).where(user_id == Books.owner_id)
+        query = select(Books).where(Books.owner_id == user_id)
         result = await session.execute(query)
 
         all_books = result.scalars().all()

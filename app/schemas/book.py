@@ -11,5 +11,6 @@ class SBookAdd(BaseModel):
 
 class SBook(SBookAdd):
     id: int
+    owner_id: int
 
     model_config = ConfigDict(from_attributes=True)

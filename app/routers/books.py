@@ -14,7 +14,10 @@ router = APIRouter(
 
 @router.post("", response_model=SBook, status_code=status.HTTP_201_CREATED)
 async def create_book(
-    book: SBookAdd, session: SessionDep, current_user_id: VerifTokenAndGetId, background_task: BackgroundTasks
+    book: SBookAdd,
+    session: SessionDep,
+    current_user_id: VerifTokenAndGetId,
+    background_task: BackgroundTasks,
 ):
     book_model = await BooksRepository.add_book(book, current_user_id, session)
     background_task.add_task(background_log, book_model.title, book_model.owner_id)
@@ -25,7 +28,7 @@ async def create_book(
 async def get_book(
     book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId
 ):
-    book = await BooksRepository.get_book(book_id, current_user_id, session)
+    book = await BooksRepository.get_book(current_user_id, book_id, session)
     if book is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
@@ -62,7 +65,7 @@ async def update_book(
 async def delete_book(
     book_id: int, session: SessionDep, current_user_id: VerifTokenAndGetId
 ):
-    delete_model = await BooksRepository.delete_book(current_user_id, book_id, session)
+    delete_model = await BooksRepository.delete_book(book_id, current_user_id, session)
     if delete_model is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,

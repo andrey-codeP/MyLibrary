@@ -4,7 +4,10 @@ from pydantic import PostgresDsn
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
-BASE_DIR = Path(__file__).resolve().parent
+CURRENT_DIR = Path(__file__).resolve().parent
+
+
+BASE_DIR = CURRENT_DIR.parent
 
 
 ENV_PATH = BASE_DIR / ".env"

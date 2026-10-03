@@ -1,6 +1,8 @@
 import logging
 
-log_format = logging.Formatter("%(asctime)s - %(filename)s - %(levelname)s - %(message)s")
+log_format = logging.Formatter(
+    "%(asctime)s - %(filename)s - %(levelname)s - %(message)s"
+)
 
 books_logger = logging.getLogger("books_audit")
 books_logger.setLevel(logging.INFO)

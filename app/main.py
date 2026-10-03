@@ -6,9 +6,6 @@ from app.routers.frontend import router as front_router
 from app.routers.authorization import router as authorization_router
 
 
-
-
-
 library = FastAPI(
     title="MyLittleLibrary",
     description="My trial project, I’m writing a library.",
