@@ -33,11 +33,17 @@ async def get_db_test():
 
 @pytest.fixture
 async def get_db_sess():
-    async with TestingSession() as session:
-        try:
-            yield session
-        finally:
-            await session.rollback()
+    # 1. Открываем общее асинхронное соединение с SQLite на время одного теста
+    async with async_engine.connect() as connection:
+        # 2. Начинаем внешнюю транзакцию
+        async with connection.begin() as transaction:
+            # 3. Создаем сессию, жестко привязанную к этому соединению
+            async with TestingSession(bind=connection) as session:
+                yield session
+
+            # 4. ПОСЛЕ ТЕСТА: Откатываем внешнюю транзакцию.
+            # Это гарантированно сотрет любые коммиты, сделанные внутри теста или роутера!
+            await transaction.rollback()
 
 
 @pytest.fixture
@@ -51,6 +57,22 @@ async def client(get_db_sess):
         yield client
 
     library.dependency_overrides.clear()
+
+
+@pytest.fixture
+async def user_clients(get_db_sess):
+    library.dependency_overrides[get_db] = lambda: get_db_sess
+
+    async with AsyncClient(
+        transport=ASGITransport(app=library), base_url="http://test"
+    ) as user_client:
+        yield user_client
+    library.dependency_overrides.clear()
+
+
+@pytest.fixture
+def user_dict_test():
+    return {"username": "тестовый_раб", "password": "тест_123"}
 
 
 @pytest.fixture

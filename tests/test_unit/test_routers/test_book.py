@@ -4,6 +4,8 @@ import pytest
 from fastapi import status
 from app.database.models.book import Books
 from app.schemas.book import SBook
+
+
 @pytest.mark.asyncio
 async def test_create_book(client, book_dict_test):
     response = await client.post("/books", json=book_dict_test)
@@ -22,13 +24,10 @@ async def test_get_book_with_id(client, book_dict_test, get_db_sess):
     create_response = await client.post("/books", json=book_dict_test)
     assert create_response.status_code == status.HTTP_201_CREATED
 
-
     created_book = create_response.json()
     book_id = created_book["id"]
 
-
     response = await client.get(f"/books/{book_id}")
-
 
     assert response.status_code == status.HTTP_200_OK
 
@@ -37,6 +36,7 @@ async def test_get_book_with_id(client, book_dict_test, get_db_sess):
     assert response_data["title"] == book_dict_test["title"]
     assert response_data["owner_id"] == 67
     assert response_data["id"] == book_id
+
 
 @pytest.mark.asyncio
 async def test_get_book_by_id_error(client):
