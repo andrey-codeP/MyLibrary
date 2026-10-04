@@ -79,8 +79,8 @@ async def login(
 @router.post("/refresh", status_code=status.HTTP_200_OK)
 async def get_new_access_token(
     response: Response,
-    token: Annotated[str | None, Cookie(alias="refresh_token")],
     session: SessionDep,
+    token: Annotated[str | None, Cookie(alias="refresh_token")] = None
 ):
 
     if token is None:

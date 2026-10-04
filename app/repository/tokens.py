@@ -3,7 +3,7 @@ from sqlalchemy import select, delete
 
 from app.database.models.tokens import Tokens
 from sqlalchemy.ext.asyncio import AsyncSession
-
+from sqlalchemy.orm import selectinload
 
 class TokenRepository:
     @classmethod
