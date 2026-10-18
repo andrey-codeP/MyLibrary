@@ -14,7 +14,7 @@ stack:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/andrey-codeP/MyLibrary/edit/main/README.md
+   git clone https://github.com/andrey-codeP/MyLibrary
    cd your-repo-name
    ```
 
