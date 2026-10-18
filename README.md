@@ -14,13 +14,13 @@ stack:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/andrey-codeP/MyLibrary
-   cd your-repo-name
+   git clone https://github.com
+   cd MyLibrary
    ```
 
 2. **Spin up the containers (API & Database):**
    ```bash
-   docker-compose up --build
+   docker compose up --build
    ```
 
 3. **Access the API Documentation:**
